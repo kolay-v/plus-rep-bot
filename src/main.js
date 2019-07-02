@@ -4,8 +4,8 @@ import Telegraf from 'telegraf'
 import { saveUser } from './middlewares'
 import { promosifyRedis } from './utils'
 import {
-  plusRep, minusRep, getRep,
-  start
+  plus, minus, getRep,
+  start, top
 } from './handlers'
 
 const { BOT_TOKEN } = process.env
@@ -17,8 +17,10 @@ const bot = new Telegraf(BOT_TOKEN)
 bot.context.redis = promosifyRedis(client)
 bot.use(saveUser)
 bot.command('rep', ...getRep)
-bot.hears(/\+rep/, ...plusRep)
-bot.hears(/\-rep/, ...minusRep)
+bot.hears('+', ...plus)
+bot.hears('-', ...minus)
 bot.start(start)
+bot.command('top', ...top)
+process.on('SIGTERM', bot.stop)
 
 bot.startPolling()
